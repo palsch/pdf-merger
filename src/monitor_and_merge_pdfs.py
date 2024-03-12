@@ -1,5 +1,6 @@
 import os
 import time
+import argparse
 import configparser
 from datetime import datetime
 
@@ -49,8 +50,13 @@ def monitor_folder(folder, output_folder):
 
 
 if __name__ == "__main__":
-    # Read config file    
-    config_file = "config.ini"
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="PDF Merger Script")
+    parser.add_argument("--config", "-c", default="config.ini", help="Path to config file")
+    args = parser.parse_args()
+
+    # Read config file
+    config_file = args.config
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"Config file '{config_file}' not found.")
 

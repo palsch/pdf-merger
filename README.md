@@ -4,6 +4,30 @@ This script monitors a folder for two PDF files with "front" and "back" in their
 
 I use this script when scanning documents with an automatic feeder. The process involves scanning the front pages first and then the back pages separately. This results in two PDF files that need to be merged.
 
+## Usage with Docker
+
+You can use docker to run the script. Here you have to only specify the `input` and `output` folder.
+
+```bash
+docker run -v /local/input:/data/input -v /local/output:/data/output pdf-merger:latest
+```
+
+### Build
+
+```bash
+docker build -t pdf-merger . 
+```
+
+### Systemd service
+
+Register docker container as systemd service and enable it by using Podman
+
+```bash
+podman generate systemd --new --files --name pdf-merger --restart-policy always
+cp container-pdf-merger.service /etc/systemd/system/systemctl 
+enable container-pdf-merger.service
+```
+
 ## Requirements
 - Python 3.x
 - PyPDF2 library
@@ -31,11 +55,14 @@ I use this script when scanning documents with an automatic feeder. The process 
 
 ## Usage
 1. Place your PDF files in the `input_folder` folder.
-1. Run the script `monitor_and_merge_pdfs.py`:
+1. Run the script `monitor_and_merge_pdfs.py` with the `--config` argument to specify the path to the config file:
 
    ```bash
-   python monitor_and_merge_pdfs.py
+   python monitor_and_merge_pdfs.py --config /path/to/config.ini
    ```
+   
+   If the --config argument is not provided, the script will use config.ini in the root directory by default.
+
    The script will continuously monitor the `input_folder` folder for two PDF files with "front" and "back" in their filenames.
 
 1. When both "front" and "back" PDFs are detected, the script will merge them into one PDF file by alternating pages from both PDFs, with the pages from the "back" PDF added in reverse order.
