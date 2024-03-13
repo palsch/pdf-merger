@@ -9,13 +9,18 @@ I use this script when scanning documents with an automatic feeder. The process 
 You can use docker to run the script. Here you have to only specify the `input` and `output` folder.
 
 ```bash
-docker run -v /local/input:/data/input -v /local/output:/data/output pdf-merger:latest
+docker run -d --name pdf-merger --restart unless-stopped -v /local/input:/data/input -v /local/output:/data/output docker.io/palsch/pdf-merger:latest
 ```
+
+Docker Hub: https://hub.docker.com/r/palsch/pdf-merger 
 
 ### Build
 
 ```bash
 docker build -t pdf-merger . 
+
+# build multi platform and push to dockerhub
+docker buildx build -t palsch/pdf-merger:latest --platform linux/amd64,linux/arm64 --push .
 ```
 
 ### Systemd service
